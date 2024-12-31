@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import CryptoJS from 'crypto-js';
 import fetch from 'node-fetch';
@@ -6,8 +5,7 @@ import cors from 'cors';
 import * as dotenv from 'dotenv';
 
 // Carga el archivo de entorno
-const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
-dotenv.config({ path: envFile });
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,10 +17,10 @@ if (!process.env.BASE_URL || !process.env.API_KEY || !process.env.API_SECRET) {
 
 // Middleware para habilitar CORS
 app.use(cors({
-    origin: 'http://localhost:5173', // Permite solicitudes desde el origen de desarrollo
+    origin: process.env.NODE_ENV === 'production' ? '*' : 'http://localhost:5173',
 }));
 
-const BASE_URL = process.env.BASE_URL; // Ejemplo: https://testnet.binance.vision
+const BASE_URL = process.env.BASE_URL;
 const API_KEY = process.env.API_KEY;
 const API_SECRET = process.env.API_SECRET;
 
@@ -59,8 +57,8 @@ app.get('/account', async (req, res) => {
     }
 });
 
-
 // Inicia el servidor
 app.listen(PORT, () => {
     console.log(`Servidor proxy escuchando en el puerto ${PORT}`);
+    console.log(`Entorno: ${process.env.NODE_ENV}`);
 });
